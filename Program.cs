@@ -1,30 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.ServiceModel.Syndication;
-using System.Globalization;
-using MySql.Data.MySqlClient;
-
 namespace SpotTheStation
 {
     class Program
     {
-
         public struct ISS_Spotting_Details
         {
-            public String DateTime;
-            public String Duration;
+            public string DateTime;
+            public string Duration;
             public int MaximumElevationDegrees;
-            public String Approach;
-            public String Departure;
+            public string Approach;
+            public string Departure;
         }
 
         public struct ISS_Spotting
         {
-            public String Title;
+            public string Title;
             public ISS_Spotting_Details Summary;
             public double Latitude;
             public double Longitude;
@@ -32,29 +21,29 @@ namespace SpotTheStation
 
         public struct Notification
         {
-            public String EventAgency;
-            public String EventTitle;
-            public String EventDescription;
-            public String EventDatetime;
-            public String EventURL;
-            public String EventCategory;
-            public String EventType;
-            public String EventIdent;
-            public Double EventLatitude;
-            public Double EventLongitude;
+            public string EventAgency;
+            public string EventTitle;
+            public string EventDescription;
+            public string EventDatetime;
+            public string EventURL;
+            public string EventCategory;
+            public string EventType;
+            public string EventIdent;
+            public double EventLatitude;
+            public double EventLongitude;
         }
 
-        private static int AddNotification(Notification event_notification)
+        private static int Add_Event_Notification(Notification event_notification)
         {
             int story_inserted = 0;
 
-            MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
+            MySql.Data.MySqlClient.MySqlConnectionStringBuilder conn_string = new MySql.Data.MySqlClient.MySqlConnectionStringBuilder();
             conn_string.Server = "localhost";
             conn_string.UserID = "mysql_username";
             conn_string.Password = "mysql_password";
             conn_string.Database = "geo_data";
 
-            MySql.Data.MySqlClient.MySqlConnection conn = new MySqlConnection(conn_string.ToString());
+            MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(conn_string.ToString());
             conn.Open();
             if (true)
             {
@@ -79,18 +68,18 @@ namespace SpotTheStation
                     int insert_status = cmd.ExecuteNonQuery();
                     if (insert_status == 1)
                     {
-                        Console.WriteLine(event_notification.EventAgency + " " + event_notification.EventTitle + " " + event_notification.EventURL);
-                        Console.WriteLine(event_notification.EventDatetime);
+                        System.Console.WriteLine(event_notification.EventAgency + " " + event_notification.EventTitle + " " + event_notification.EventURL);
+                        System.Console.WriteLine(event_notification.EventDatetime);
                     }
                 }
-                catch (MySqlException ex)
+                catch(MySql.Data.MySqlClient.MySqlException ex)
                 {
                     int errorcode = ex.Number;
-                    Console.WriteLine(errorcode);
+                    System.Console.WriteLine(errorcode);
                 }
-                catch (Exception e)
+                catch(System.Exception e)
                 {
-                    Console.WriteLine(e);
+                    System.Console.WriteLine(e);
                 }
 
             }
@@ -102,7 +91,7 @@ namespace SpotTheStation
 
         static void Main(string[] args)
         {
-            String rss = "https://spotthestation.nasa.gov/sightings/xml_files/United_States_Texas_Johnson_Space_Center.xml";
+            string rss = "https://spotthestation.nasa.gov/sightings/xml_files/United_States_Texas_Johnson_Space_Center.xml";
 
             double stationLatitude = 29.559357;
             double stationLongitude = -95.08994;
@@ -118,97 +107,97 @@ namespace SpotTheStation
 
             try
             {
-                XmlReader reader = XmlReader.Create(rss);
-                SyndicationFeed feed = SyndicationFeed.Load(reader);
+                System.Xml.XmlReader reader = System.Xml.XmlReader.Create(rss);
+                System.ServiceModel.Syndication.SyndicationFeed feed = System.ServiceModel.Syndication.SyndicationFeed.Load(reader);
 
                 reader.Close();
 
 
-                foreach (SyndicationItem item in feed.Items)
+                foreach (System.ServiceModel.Syndication.SyndicationItem item in feed.Items)
                 {
                     try
                     {
                         ISS_Spotting iss_sighting = new ISS_Spotting();
 
                         iss_sighting.Title = item.Title.Text.Trim();
-                        String SummaryDetails = item.Summary.Text.Trim();
+                        string SummaryDetails = item.Summary.Text.Trim();
 
                         // string formatForMySql = item.PublishDate.ToString("dd MMM yyyy H:mm:ss tt");
 
-                        String[] sighting_info = SummaryDetails.Split(new string[] { "<br/>" }, StringSplitOptions.None);
+                        string[] sighting_info = SummaryDetails.Split(new string[] { "<br/>" }, System.StringSplitOptions.None);
 
                         iss_sighting.Latitude = stationLatitude;
                         iss_sighting.Longitude = stationLongitude;
 
-                        Console.WriteLine(iss_sighting.Title);
+                        System.Console.WriteLine(iss_sighting.Title);
                         ISS_Spotting_Details iss_spotting_details = new ISS_Spotting_Details();
-                        String DateString = null, TimeString = null, DurationString = null, MaximumElevationString = null, ApproachString = null, DepartureString = null;
+                        string DateString = null, TimeString = null, DurationString = null, MaximumElevationString = null, ApproachString = null, DepartureString = null;
 
-                        foreach (String data in sighting_info)
+                        foreach (string data in sighting_info)
                         {
-                            String data_trimmed = data.Trim();
+                            string data_trimmed = data.Trim();
                             if (data_trimmed.Contains("Date: "))
                             {
-                                String[] DateDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                string[] DateDetailsArr = data_trimmed.Split(new string[] { ":" }, System.StringSplitOptions.None);
                                 DateString = DateDetailsArr[1].Trim();
-                                foreach (String day_of_week in DaysOfWeek)
+                                foreach (string day_of_week in DaysOfWeek)
                                 {
                                     DateString = DateString.Replace(day_of_week, "").Trim();
                                 }
                             }
                             if (data_trimmed.Contains("Time: "))
                             {
-                                // String[] TimeDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                // string[] TimeDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
                                 TimeString = data_trimmed.Replace("Time: ", "").Trim();
                             }
 
                             if (data_trimmed.Contains("Duration: "))
                             {
-                                String[] DurationDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                string[] DurationDetailsArr = data_trimmed.Split(new string[] { ":" }, System.StringSplitOptions.None);
                                 DurationString = DurationDetailsArr[1].Trim();
                                 iss_spotting_details.Duration = DurationString;
                             }
                             if (data_trimmed.Contains("Maximum Elevation:"))
                             {
-                                String[] MaximumElvationArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                string[] MaximumElvationArr = data_trimmed.Split(new string[] { ":" }, System.StringSplitOptions.None);
                                 MaximumElevationString = MaximumElvationArr[1].Replace("�", "").Trim();
                                 try
                                 {
-                                    iss_spotting_details.MaximumElevationDegrees = Convert.ToInt32(MaximumElevationString);
+                                    iss_spotting_details.MaximumElevationDegrees = System.Convert.ToInt32(MaximumElevationString);
                                 }
-                                catch (Exception e)
+                                catch(System.Exception e)
                                 {
-                                    Console.WriteLine(e);
+                                    System.Console.WriteLine(e);
                                 }
                             }
                             if (data_trimmed.Contains("Approach: "))
                             {
-                                String[] ApproachDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                string[] ApproachDetailsArr = data_trimmed.Split(new string[] { ":" }, System.StringSplitOptions.None);
                                 ApproachString = ApproachDetailsArr[1].Trim();
                                 iss_spotting_details.Approach = ApproachString;
                             }
                             if (data_trimmed.Contains("Departure: "))
                             {
-                                String[] DepartureDetailsArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
+                                string[] DepartureDetailsArr = data_trimmed.Split(new string[] { ":" }, System.StringSplitOptions.None);
                                 DepartureString = DepartureDetailsArr[1].Trim();
                                 iss_spotting_details.Departure = DepartureString;
                             }
                         }
 
-                        String DateStringUnformatted = DateString + " " + TimeString;
+                        string DateStringUnformatted = DateString + " " + TimeString;
 
                         // string formatForMySql = item.PublishDate.ToString("dd MMM yyyy H:mm:ss tt");
-                        String DateStringFormmated = null;
-                        CultureInfo MyCultureInfo = new CultureInfo("en-US");
+                        string DateStringFormmated = null;
+                        System.Globalization.CultureInfo MyCultureInfo = new System.Globalization.CultureInfo("en-US");
                         try
                         {
-                            DateTime SightingDateTime = DateTime.ParseExact(DateStringUnformatted, "MMM d, yyyy h:m tt", MyCultureInfo);
+                            System.DateTime SightingDateTime = System.DateTime.ParseExact(DateStringUnformatted, "MMM d, yyyy h:m tt", MyCultureInfo);
                             iss_spotting_details.DateTime = SightingDateTime.ToString("yyyy-MM-dd H:mm:ss");
 
                         }
-                        catch (FormatException)
+                        catch(System.FormatException)
                         {
-                            Console.WriteLine("Unable to parse '{0}'", DateStringUnformatted);
+                            System.Console.WriteLine("Unable to parse '{0}'", DateStringUnformatted);
                         }
 
                         iss_sighting.Summary = iss_spotting_details;
@@ -227,28 +216,28 @@ namespace SpotTheStation
                             iss_notification.EventLongitude = stationLongitude;
                             iss_notification.EventURL = "https://spotthestation.nasa.gov/sightings/xml_files/United_States_Texas_Johnson_Space_Center.xml";
 
-                            int result = AddNotification(iss_notification);
+                            int result = Add_Event_Notification(iss_notification);
                             if (result != 0)
                             {
-                                Console.WriteLine(iss_sighting.Summary.DateTime);
-                                Console.WriteLine(iss_sighting.Summary.MaximumElevationDegrees);
-                                Console.WriteLine(iss_sighting.Summary.Approach);
-                                Console.WriteLine(iss_sighting.Summary.Departure);
+                                System.Console.WriteLine(iss_sighting.Summary.DateTime);
+                                System.Console.WriteLine(iss_sighting.Summary.MaximumElevationDegrees);
+                                System.Console.WriteLine(iss_sighting.Summary.Approach);
+                                System.Console.WriteLine(iss_sighting.Summary.Departure);
                             }
 
                         }
 
                         // AddNewsStory(news_agencies[i], feed_article);
                     }
-                    catch (Exception erro)
+                    catch(System.Exception erro)
                     {
-                        Console.WriteLine(erro);
+                        System.Console.WriteLine(erro);
                     }
                 }
             }
-            catch (Exception caughtexc)
+            catch(System.Exception caughtexc)
             {
-                Console.WriteLine(caughtexc);
+                System.Console.WriteLine(caughtexc);
             }
 
         }
