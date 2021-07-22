@@ -107,6 +107,15 @@ namespace SpotTheStation
             double stationLatitude = 29.559357;
             double stationLongitude = -95.08994;
 
+            System.Collections.Generic.List<string> DaysOfWeek = new System.Collections.Generic.List<string>();
+            DaysOfWeek.Add("Monday");
+            DaysOfWeek.Add("Tuesday");
+            DaysOfWeek.Add("Wednesday");
+            DaysOfWeek.Add("Thursday");
+            DaysOfWeek.Add("Friday");
+            DaysOfWeek.Add("Saturday");
+            DaysOfWeek.Add("Sunday");
+
             try
             {
                 XmlReader reader = XmlReader.Create(rss);
@@ -134,16 +143,6 @@ namespace SpotTheStation
                         Console.WriteLine(iss_sighting.Title);
                         ISS_Spotting_Details iss_spotting_details = new ISS_Spotting_Details();
                         String DateString = null, TimeString = null, DurationString = null, MaximumElevationString = null, ApproachString = null, DepartureString = null;
-
-
-                        List<String> DaysOfWeek = new List<string>();
-                        DaysOfWeek.Add("Monday");
-                        DaysOfWeek.Add("Tuesday");
-                        DaysOfWeek.Add("Wednesday");
-                        DaysOfWeek.Add("Thursday");
-                        DaysOfWeek.Add("Friday");
-                        DaysOfWeek.Add("Saturday");
-                        DaysOfWeek.Add("Sunday");
 
                         foreach (String data in sighting_info)
                         {
