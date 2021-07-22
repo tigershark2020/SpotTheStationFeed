@@ -48,23 +48,19 @@ namespace SpotTheStation
         {
             int story_inserted = 0;
 
-            MySql.Data.MySqlClient.MySqlConnection conn;
-
-            conn = new MySql.Data.MySqlClient.MySqlConnection();
-
             MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
             conn_string.Server = "localhost";
             conn_string.UserID = "mysql_username";
             conn_string.Password = "mysql_password";
             conn_string.Database = "geo_data";
 
-            conn = new MySqlConnection(conn_string.ToString());
+            MySql.Data.MySqlClient.MySqlConnection conn = new MySqlConnection(conn_string.ToString());
             conn.Open();
             if (true)
             {
                 try
                 {
-                    MySqlCommand cmd = conn.CreateCommand();
+                    MySql.Data.MySqlClient.MySqlCommand cmd = conn.CreateCommand();
                     cmd.Connection = conn;
 
                     cmd.CommandText = "INSERT INTO `geo_data`.`geo_events` (`geo_event_agency`,`geo_event_title`,`geo_event_url`,`geo_event_starttime`,`geo_event_category`,`geo_event_type`,`geo_event_ident`,`geo_event_location_latitude`,`geo_event_location_longitude`,`geo_event_notify`) VALUES (@event_agency,@event_title,@event_url,@event_datetime,@event_category,@event_type,@event_ident,@event_latitude,@event_longitude,1);";
@@ -176,7 +172,7 @@ namespace SpotTheStation
                             if (data_trimmed.Contains("Maximum Elevation:"))
                             {
                                 String[] MaximumElvationArr = data_trimmed.Split(new string[] { ":" }, StringSplitOptions.None);
-                                MaximumElevationString = MaximumElvationArr[1].Replace("°", "").Trim();
+                                MaximumElevationString = MaximumElvationArr[1].Replace("ï¿½", "").Trim();
                                 try
                                 {
                                     iss_spotting_details.MaximumElevationDegrees = Convert.ToInt32(MaximumElevationString);
@@ -223,7 +219,7 @@ namespace SpotTheStation
                             Notification iss_notification = new Notification();
 
                             iss_notification.EventAgency = "48942";
-                            iss_notification.EventTitle = iss_sighting.Title + " (Elevation: " + iss_sighting.Summary.MaximumElevationDegrees.ToString() + "°)";
+                            iss_notification.EventTitle = iss_sighting.Title + " (Elevation: " + iss_sighting.Summary.MaximumElevationDegrees.ToString() + "ï¿½)";
                             iss_notification.EventDatetime = iss_sighting.Summary.DateTime;
                             iss_notification.EventCategory = "Space";
                             iss_notification.EventType = "Outdoor";
